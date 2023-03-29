@@ -1,2 +1,5 @@
-# cosmos-builds
-Development Builds of Gaia
+## Gaia Development Builds
+
+This repository contains pre-release builds of development branches used for automated testing.
+
+Use at your own risk!
