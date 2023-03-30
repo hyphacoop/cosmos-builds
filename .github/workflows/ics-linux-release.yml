@@ -72,15 +72,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Update release page
-        run: |
-          echo "Letest release: {{ needs.collect_remote_release.outputs.release }}" >> ics-linux-release-body.md
-
       - name: Add release
         uses: ncipollo/release-action@v1
         with:
           artifacts: "~/interchain-security-cd-linux"
-          name: ${{needs.collect_remote_commit.outputs.sha}}
+          name: ${{needs.collect_remote_release.outputs.release}}
           bodyFile: .github/workflows/ics-linux-release-body.md
           prerelease: true
           replacesArtifacts: false
