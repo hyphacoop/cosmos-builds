@@ -1,4 +1,4 @@
-name: Linux Build Main
+name: Gaia Linux Build Main
 
 on:  
   push:
@@ -29,7 +29,7 @@ jobs:
         id: query_release
         run: |
           curl -s -L -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/hyphacoop/cosmos-builds/releases > releases.json
-          release=$(jq -r '.[] | select(.tag_name== "linux-main") |  .name' releases.json)
+          release=$(jq -r '.[] | select(.tag_name== "gaiad-linux-main") |  .name' releases.json)
           echo "sha=$release" >> "$GITHUB_OUTPUT"
 
   build:
@@ -46,11 +46,6 @@ jobs:
       - name: Install tools
         run: |
           sudo apt-get install curl jq -y
-
-      - name: Obtain last commit
-        run: |
-          LAST_COMMIT=$(curl -s -L -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/cosmos/gaia/branches/release/v9.0.x | jq -r '.commit.sha')
-          echo $LAST_COMMIT > ~/.last_commit
 
       - name: Setup environment
         run: |
@@ -79,7 +74,7 @@ jobs:
         uses: dev-drprasad/delete-older-releases@v0.2.1
         with:
           keep_latest: 0
-          delete_tag_pattern: "linux-main"
+          delete_tag_pattern: "gaiad-linux-main"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -88,9 +83,9 @@ jobs:
         with:
           artifacts: "~/gaiad-linux"
           name: ${{needs.collect_remote_commit.outputs.sha}}
-          bodyFile: .github/workflows/linux-main-body.md
+          bodyFile: .github/workflows/gaiad-linux-main-body.md
           prerelease: true
           replacesArtifacts: false
           allowUpdates: false
-          tag: "linux-main"
+          tag: "gaiad-linux-main"
           token: ${{ secrets.GITHUB_TOKEN }}
