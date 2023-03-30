@@ -1,7 +1,6 @@
 name: ICS Consumer Linux Build Release
 
 on:  
-  push:
   workflow_dispatch:
 
 jobs:
