@@ -14,10 +14,10 @@ jobs:
     outputs:
       sha: ${{ steps.query_commit.outputs.sha }}
     steps:
-      - name: Query latest commit on the release/v9.0.x branch
+      - name: Query latest commit on the release/v9.1.x branch
         id: query_commit
         run: |
-          commit=$(curl -s -L -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/cosmos/gaia/branches/release/v9.0.x | jq -r '.commit.sha')
+          commit=$(curl -s -L -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/cosmos/gaia/branches/release/v9.1.x | jq -r '.commit.sha')
           echo "sha=$commit" >> "$GITHUB_OUTPUT"
 
   collect_latest_build:
@@ -64,7 +64,7 @@ jobs:
         run: |
           git clone https://github.com/cosmos/gaia.git
           cd gaia
-          git checkout release/v9.0.x
+          git checkout release/v9.1.x
           make build
           cp build/gaiad ~/gaiad-linux
       
