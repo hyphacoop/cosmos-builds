@@ -65,6 +65,7 @@ jobs:
           git clone https://github.com/cosmos/gaia.git
           cd gaia
           git checkout release/v10.0.x
+          export LDFLAGS="-extldflags=-static"
           make build
           cp build/gaiad ~/gaiad-linux
       
