@@ -1,0 +1,49 @@
+name: Stride Linux Build Release
+
+on:  
+  workflow_dispatch:
+  push:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+
+      - name: Install tools
+        run: |
+          sudo apt-get install curl jq -y
+
+      - name: Setup environment
+        run: |
+          sudo apt install build-essential wget -y
+
+      - name: Install golang
+        run: |
+          wget -q https://go.dev/dl/go1.20.linux-amd64.tar.gz
+          sudo tar -C /usr/local -xzf go1.20.linux-amd64.tar.gz
+
+      - name: Clone and build interchain security
+        run: |
+          export PATH=$PATH:/usr/local/go/bin
+          git clone https://github.com/Stride-Labs/stride.git
+          cd stride
+          git checkout 3aeb075f36cb12711201a7f17e8b8d856bd99a01
+          make install
+          cp ~/go/bin/strided ~/strided-linux
+      
+      # Publish
+      - name: Add release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "~/strided-linux"
+          bodyFile: .github/workflows/stride-linux-release-body.md
+          prerelease: true
+          replacesArtifacts: false
+          allowUpdates: false
+          tag: "stride-linux"
+          token: ${{ secrets.GITHUB_TOKEN }}
