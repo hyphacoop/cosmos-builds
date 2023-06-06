@@ -2,7 +2,6 @@ name: Stride Linux Build Release
 
 on:  
   workflow_dispatch:
-  push:
 
 jobs:
   build:
