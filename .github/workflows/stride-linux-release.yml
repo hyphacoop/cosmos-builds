@@ -36,10 +36,11 @@ jobs:
           export LDFLAGS="-extldflags=-static"
           make install
           cp ~/go/bin/strided ~/strided-linux
-          rm -rf ~/stride
       
       - name: Clone and build Stride (consumer)
         run: |
+          cd
+          rm -rf ~/stride
           export PATH=$PATH:/usr/local/go/bin
           git clone https://github.com/Stride-Labs/stride.git
           cd stride
