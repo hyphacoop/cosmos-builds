@@ -36,6 +36,7 @@ jobs:
           export LDFLAGS="-extldflags=-static"
           make install
           cp ~/go/bin/strided ~/strided-linux
+          rm -rf ~/stride
       
       - name: Clone and build Stride (consumer)
         run: |
