@@ -2,6 +2,7 @@ name: Stride Linux Build Release
 
 on:  
   workflow_dispatch:
+  push:
 
 jobs:
   build:
@@ -28,49 +29,51 @@ jobs:
 
       - name: Print go version
         run: |
+          export PATH=$PATH:/usr/local/go/bin
           go version
+          which go
           
-      - name: Clone and build Stride (sovereign)
-        run: |
-          export PATH=$PATH:/usr/local/go/bin
-          git clone https://github.com/Stride-Labs/stride.git
-          cd stride
-          git checkout 3aeb075f36cb12711201a7f17e8b8d856bd99a01
-          export LDFLAGS="-extldflags=-static"
-          make install
-          cp ~/go/bin/strided ~/strided-linux
+      # - name: Clone and build Stride (sovereign)
+      #   run: |
+      #     export PATH=$PATH:/usr/local/go/bin
+      #     git clone https://github.com/Stride-Labs/stride.git
+      #     cd stride
+      #     git checkout 3aeb075f36cb12711201a7f17e8b8d856bd99a01
+      #     export LDFLAGS="-extldflags=-static"
+      #     make install
+      #     cp ~/go/bin/strided ~/strided-linux
       
-      - name: Clone and build Stride (consumer)
-        run: |
-          cd
-          rm -rf ~/stride
-          export PATH=$PATH:/usr/local/go/bin
-          git clone https://github.com/Stride-Labs/stride.git
-          cd stride
-          git checkout consumer-sdk47-informal
-          export LDFLAGS="-extldflags=-static"
-          make install
-          cp ~/go/bin/strided ~/strided-consumer-linux
+      # - name: Clone and build Stride (consumer)
+      #   run: |
+      #     cd
+      #     rm -rf ~/stride
+      #     export PATH=$PATH:/usr/local/go/bin
+      #     git clone https://github.com/Stride-Labs/stride.git
+      #     cd stride
+      #     git checkout consumer-sdk47-informal
+      #     export LDFLAGS="-extldflags=-static"
+      #     make install
+      #     cp ~/go/bin/strided ~/strided-consumer-linux
 
-      # Publish
-      - name: Add sovereign release
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: "~/strided-linux"
-          bodyFile: .github/workflows/stride-linux-release-body.md
-          prerelease: true
-          replacesArtifacts: false
-          allowUpdates: false
-          tag: "stride-linux"
-          token: ${{ secrets.GITHUB_TOKEN }}
+      # # Publish
+      # - name: Add sovereign release
+      #   uses: ncipollo/release-action@v1
+      #   with:
+      #     artifacts: "~/strided-linux"
+      #     bodyFile: .github/workflows/stride-linux-release-body.md
+      #     prerelease: true
+      #     replacesArtifacts: false
+      #     allowUpdates: false
+      #     tag: "stride-linux"
+      #     token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Add consumer release
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: "~/strided-consumer-linux"
-          bodyFile: .github/workflows/stridec-linux-release-body.md
-          prerelease: true
-          replacesArtifacts: false
-          allowUpdates: false
-          tag: "stride-consumer-linux"
-          token: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Add consumer release
+      #   uses: ncipollo/release-action@v1
+      #   with:
+      #     artifacts: "~/strided-consumer-linux"
+      #     bodyFile: .github/workflows/stridec-linux-release-body.md
+      #     prerelease: true
+      #     replacesArtifacts: false
+      #     allowUpdates: false
+      #     tag: "stride-consumer-linux"
+      #     token: ${{ secrets.GITHUB_TOKEN }}
