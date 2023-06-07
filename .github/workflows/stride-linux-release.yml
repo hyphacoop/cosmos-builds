@@ -47,7 +47,7 @@ jobs:
           export PATH=$PATH:/usr/local/go/bin
           git clone https://github.com/Stride-Labs/stride.git
           cd stride
-          git checkout consumer-sdk47-informal
+          git checkout 17fa2fd7802005a7af09e6d2d0f5126b4bf1e10f
           export LDFLAGS="-extldflags=-static"
           make install
           cp ~/go/bin/strided ~/strided-consumer-linux
