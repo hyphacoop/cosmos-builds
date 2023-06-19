@@ -98,7 +98,7 @@ jobs:
       # Trigger cosmos-ansible workflows
       - name: Dispatch to cosmos-ansible repo
         env:
-          SECRET_TOKEN: ${{ secrets.ACTIONS_TOKEN }}
+          SECRET_TOKEN: ${{ secrets.HYPHA_BOT_ACTIONS_TOKEN }}
         run: |
           curl -L \
           -X POST \
