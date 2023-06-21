@@ -47,7 +47,7 @@ jobs:
           cd interchain-security
           git checkout $LAST_RELEASE
           make install
-          # cp ~/go/bin/interchain-security-sd ~/interchain-security-sd-linux
+          cp ~/go/bin/interchain-security-sd ~/interchain-security-sd-linux
       
       # Publish
       - name: Add release
