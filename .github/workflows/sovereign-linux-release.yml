@@ -1,7 +1,8 @@
-name: ICS Consumer Linux Build Release
+name: ICS Sovereign Linux Build Release
 
 on:  
   workflow_dispatch:
+  push:
 
 jobs:
   collect_remote_release:
@@ -47,17 +48,18 @@ jobs:
           cd interchain-security
           git checkout $LAST_RELEASE
           make install
-          cp ~/go/bin/interchain-security-cd ~/interchain-security-cd-linux
+          ls ~/go/bin/
+          # cp ~/go/bin/interchain-security-cd ~/interchain-security-cd-linux
       
       # Publish
-      - name: Add release
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: "~/interchain-security-cd-linux"
-          name: ${{needs.collect_remote_release.outputs.release}}
-          bodyFile: .github/workflows/ics-linux-release-body.md
-          prerelease: true
-          replacesArtifacts: false
-          allowUpdates: false
-          tag: "ics-${{needs.collect_remote_release.outputs.release}}"
-          token: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Add release
+      #   uses: ncipollo/release-action@v1
+      #   with:
+      #     artifacts: "~/interchain-security-cd-linux"
+      #     name: ${{needs.collect_remote_release.outputs.release}}
+      #     bodyFile: .github/workflows/ics-linux-release-body.md
+      #     prerelease: true
+      #     replacesArtifacts: false
+      #     allowUpdates: false
+      #     tag: "ics-${{needs.collect_remote_release.outputs.release}}"
+      #     token: ${{ secrets.GITHUB_TOKEN }}
