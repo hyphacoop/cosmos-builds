@@ -1,7 +1,6 @@
 name: Gaia Linux Build v10 Release
 
-on:  
-  push:
+on:
   workflow_dispatch:
   schedule:
     # Run every Wednesday at 1:00
