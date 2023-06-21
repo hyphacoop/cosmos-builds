@@ -1,7 +1,6 @@
 name: Gaia Linux Build Main
 
-on:  
-  push:
+on:
   workflow_dispatch:
   schedule:
     # Run every day at 1:00 and 13:00
