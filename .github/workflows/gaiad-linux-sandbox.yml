@@ -1,0 +1,66 @@
+name: Gaia Linux Sandbox Build
+
+on:
+  workflow_dispatch:
+  push:
+    
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+
+      - name: Install tools
+        run: |
+          sudo apt-get install curl jq -y
+
+      - name: Setup environment
+        run: |
+          sudo apt install build-essential wget -y
+
+      - name: Install golang
+        run: |
+          wget -q https://go.dev/dl/go1.20.linux-amd64.tar.gz
+          sudo tar -C /usr/local -xzf go1.20.linux-amd64.tar.gz
+
+      - name: Update PATH
+        run: |
+          echo "/usr/local/go/bin" >> $GITHUB_PATH
+          go version
+
+      - name: Clone and build Gaia
+        run: |
+          git clone https://github.com/cosmos/gaia.git
+          cd gaia
+          git checkout 09b648894e35b94cec10cddf9980d4697087c962
+          make build
+          cp build/gaiad ~/gaiad-linux
+      
+      - name: Print gaia version
+        run: |
+          ~/gaiad-linux version
+
+      # Publish
+      - name: Remove old releases
+        uses: dev-drprasad/delete-older-releases@v0.2.1
+        with:
+          keep_latest: 0
+          delete_tag_pattern: "gaiad-linux-sandbox"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "~/gaiad-linux"
+          name: Sandbox build
+          bodyFile: .github/workflows/gaiad-linux-sandbox-body.md
+          prerelease: true
+          replacesArtifacts: false
+          allowUpdates: false
+          tag: "gaiad-linux-sandbox"
+          token: ${{ secrets.GITHUB_TOKEN }}
