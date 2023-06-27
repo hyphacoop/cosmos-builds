@@ -1,4 +1,4 @@
 ## Stride (Consumer) Linux build
 
-Binaries are built to the `17fa2fd7802005a7af09e6d2d0f5126b4bf1e10f` commit in the `StrideLabs/stride` repo.
+Binaries are built to the `e7a01bcdb0f192cb028638ccd25f02f9f8b73ad4` commit in the `StrideLabs/stride` repo.
 
