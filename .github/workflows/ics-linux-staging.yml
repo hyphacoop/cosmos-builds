@@ -2,7 +2,6 @@ name: ICS Consumer Linux Staging Build
 
 on:
   workflow_dispatch:
-  push:
 
 jobs:
   build:
@@ -37,8 +36,17 @@ jobs:
           git clone https://github.com/cosmos/interchain-security.git
           cd interchain-security
           git checkout masa/1092-slash-packet-incompatibility
+          export LDFLAGS="-extldflags=-static"
           make install
           cp ~/go/bin/interchain-security-cd ~/interchain-security-cd-linux
+
+      - name: Remove old releases
+        uses: dev-drprasad/delete-older-releases@v0.2.1
+        with:
+          keep_latest: 0
+          delete_tag_pattern: "ics-linux-staging"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Add release
         uses: ncipollo/release-action@v1

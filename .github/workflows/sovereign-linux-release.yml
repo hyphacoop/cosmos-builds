@@ -46,6 +46,7 @@ jobs:
           git clone https://github.com/cosmos/interchain-security.git
           cd interchain-security
           git checkout $LAST_RELEASE
+          export LDFLAGS="-extldflags=-static"
           make install
           cp ~/go/bin/interchain-security-sd ~/interchain-security-sd-linux
       
