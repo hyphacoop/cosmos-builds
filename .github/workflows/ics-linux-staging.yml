@@ -1,0 +1,52 @@
+name: ICS Consumer Linux Staging Build
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+
+      - name: Install tools
+        run: |
+          sudo apt-get install curl jq -y
+
+      - name: Setup environment
+        run: |
+          sudo apt install build-essential wget -y
+
+      - name: Install golang
+        run: |
+          wget -q https://go.dev/dl/go1.20.linux-amd64.tar.gz
+          sudo tar -C /usr/local -xzf go1.20.linux-amd64.tar.gz
+
+      - name: Update PATH
+        run: |
+          echo "/usr/local/go/bin" >> $GITHUB_PATH
+          go version
+
+      - name: Clone and build ICS
+        run: |
+          git clone https://github.com/cosmos/interchain-security.git
+          cd interchain-security
+          git checkout masa/1092-slash-packet-incompatibility
+          make install
+          cp ~/go/bin/interchain-security-cd ~/interchain-security-cd-linux
+
+      - name: Add release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "~/interchain-security-cd-linux"
+          bodyFile: .github/workflows/ics-linux-staging-body.md
+          prerelease: true
+          replacesArtifacts: false
+          allowUpdates: false
+          tag: "ics-linux-staging"
+          token: ${{ secrets.GITHUB_TOKEN }}
