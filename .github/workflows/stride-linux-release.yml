@@ -55,6 +55,7 @@ jobs:
       # Publish
       - name: Add sovereign release
         uses: ncipollo/release-action@v1
+        continue-on-error: true
         with:
           artifacts: "~/strided-linux"
           bodyFile: .github/workflows/stride-linux-release-body.md
