@@ -60,7 +60,7 @@ jobs:
           git clone https://github.com/informalsystems/hermes.git
           cd hermes
           git checkout $LAST_RELEASE
-          rustup target add x86_64-unknown-linux-musl
+          #rustup target add x86_64-unknown-linux-musl
           #cargo build --release --bin hermes
           cargo build --target x86_64-unknown-linux-musl --release --bin hermes
           cp target/x86_64-unknown-linux-musl/release/hermes ~/hermes-linux
