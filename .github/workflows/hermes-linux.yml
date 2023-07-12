@@ -22,7 +22,7 @@ jobs:
 
   build:
     name: Build
-    runs-on: self-hosted-debian-11
+    runs-on: ubuntu-latest
     needs: [collect_remote_release]
     permissions:
       contents: write
@@ -60,9 +60,9 @@ jobs:
           git clone https://github.com/informalsystems/hermes.git
           cd hermes
           git checkout $LAST_RELEASE
-          #rustup target add x86_64-unknown-linux-musl
-          cargo build --release --bin hermes
-          #cargo build --target x86_64-unknown-linux-musl --release --bin hermes
+          rustup target add x86_64-unknown-linux-musl
+          #cargo build --release --bin hermes
+          cargo build --target x86_64-unknown-linux-musl --release --bin hermes
           cp target/release/hermes ~/hermes-linux
       
       - name: Print Hermes version
