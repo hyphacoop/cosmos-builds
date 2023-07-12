@@ -50,10 +50,12 @@ jobs:
       - name: Update PATH
         run: |
           echo "~/.cargo/bin" >> $GITHUB_PATH
+          source "$HOME/.cargo/env"
           cargo version
 
       - name: Clone and build Hermes
         run: |
+          source "$HOME/.cargo/env"
           LAST_RELEASE=${{needs.collect_remote_release.outputs.release}}
           git clone https://github.com/informalsystems/hermes.git
           cd hermes
