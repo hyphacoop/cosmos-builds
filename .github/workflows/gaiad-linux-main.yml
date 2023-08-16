@@ -67,6 +67,7 @@ jobs:
           cd gaia
           git checkout main
           export LDFLAGS="-extldflags=-static"
+          export CGO_ENABLED=0
           make build
           cp build/gaiad ~/gaiad-linux
       
