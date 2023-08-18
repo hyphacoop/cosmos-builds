@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   schedule:
     # Run every day at 1:00 and 13:00
-    - cron: '0 1,13 * * *'
+    - cron: '0 4,10,16,22 * * 1-5'
 
 jobs:
   collect_remote_commit:
