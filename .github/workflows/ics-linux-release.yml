@@ -56,10 +56,10 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "~/interchain-security-cd-linux"
-          name: ${{needs.collect_remote_release.outputs.release}}
+          name: consumer-${{needs.collect_remote_release.outputs.release}}
           bodyFile: .github/workflows/ics-linux-release-body.md
           prerelease: true
           replacesArtifacts: false
           allowUpdates: false
-          tag: "ics-${{needs.collect_remote_release.outputs.release}}"
+          tag: "ics-consumer-${{needs.collect_remote_release.outputs.release}}"
           token: ${{ secrets.GITHUB_TOKEN }}
