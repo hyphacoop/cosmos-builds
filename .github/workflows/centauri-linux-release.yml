@@ -36,7 +36,6 @@ jobs:
           git clone https://github.com/notional-labs/composable-centauri.git
           cd composable-centauri
           git checkout v5.0.0
-          export LDFLAGS="-extldflags=-static"
           make install
           cp ~/go/bin/centaurid ~/centaurid-linux
 
