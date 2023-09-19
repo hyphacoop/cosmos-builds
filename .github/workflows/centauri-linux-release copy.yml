@@ -1,0 +1,55 @@
+name: Centauri Linux Build Release
+
+on:  
+  workflow_dispatch:
+  push:
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+
+      - name: Install tools
+        run: |
+          sudo apt-get install curl jq -y
+
+      - name: Setup environment
+        run: |
+          sudo apt install build-essential wget -y
+
+      - name: Install golang
+        run: |
+          wget -q https://go.dev/dl/go1.20.linux-amd64.tar.gz
+          sudo tar -C /usr/local -xzf go1.20.linux-amd64.tar.gz
+
+      - name: Print go version
+        run: |
+          go version
+          
+      - name: Clone and build Centauri (v5.0.0)
+        run: |
+          export PATH=/usr/local/go/bin:$PATH
+          git clone https://github.com/notional-labs/composable-centauri.git
+          cd composable-centauri
+          git checkout v5.0.0
+          export LDFLAGS="-extldflags=-static"
+          export CGO_ENABLED=0
+          make install
+          cp ~/go/bin/centaurid ~/centaurid-linux
+
+      # Publish
+      - name: Add sovereign release
+        uses: ncipollo/release-action@v1
+        continue-on-error: true
+        with:
+          artifacts: "~/centaurid-linux"
+          bodyFile: .github/workflows/centauri-linux-release-body.md
+          prerelease: true
+          replacesArtifacts: false
+          allowUpdates: false
+          tag: "centauri-linux"
+          token: ${{ secrets.GITHUB_TOKEN }}
