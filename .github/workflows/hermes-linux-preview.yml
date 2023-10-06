@@ -1,0 +1,73 @@
+name: Hermes Linux Preview Build
+
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+
+      - name: update apt
+        run: |
+          sudo apt update
+          sudo apt dist-upgrade -y
+
+      - name: Install tools
+        run: |
+          sudo apt-get install curl jq -y
+
+      - name: Setup environment
+        run: |
+          sudo apt install build-essential wget pkg-config musl-tools -y
+
+      - name: Install Rust
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
+      - name: Update PATH
+        run: |
+          echo "~/.cargo/bin" >> $GITHUB_PATH
+          source "$HOME/.cargo/env"
+          cargo version
+
+      - name: Clone and build Hermes
+        run: |
+          source "$HOME/.cargo/env"
+          LAST_RELEASE=${{needs.collect_remote_release.outputs.release}}
+          git clone https://github.com/informalsystems/hermes.git
+          cd hermes
+          git checkout anca/evidene_worker_poc
+          rustup target add x86_64-unknown-linux-musl
+          #cargo build --release --bin hermes
+          cargo build --target x86_64-unknown-linux-musl --release --bin hermes
+          cp target/x86_64-unknown-linux-musl/release/hermes ~/hermes-linux
+      
+      - name: Print Hermes version
+        run: |
+          ~/hermes-linux version
+
+      # Publish
+      - name: Remove old releases
+        uses: dev-drprasad/delete-older-releases@v0.2.1
+        with:
+          keep_latest: 0
+          delete_tag_pattern: "hermes-linux-preview"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "~/hermes-linux"
+          name: "Hermes Preview Build"
+          bodyFile: .github/workflows/hermes-linux-body.md
+          prerelease: true
+          replacesArtifacts: false
+          allowUpdates: false
+          tag: "hermes-linux-preview"
+          token: ${{ secrets.GITHUB_TOKEN }}
