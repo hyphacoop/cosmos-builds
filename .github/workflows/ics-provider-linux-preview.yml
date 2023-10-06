@@ -2,6 +2,7 @@ name: ICS Provider Linux Preview Build
 
 on:  
   workflow_dispatch:
+  push:
 
 jobs:
   build:
