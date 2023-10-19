@@ -43,7 +43,7 @@ jobs:
           LAST_RELEASE=${{needs.collect_remote_release.outputs.release}}
           git clone https://github.com/informalsystems/hermes.git
           cd hermes
-          git checkout anca/evidene_worker_poc
+          #git checkout anca/evidene_worker_poc
           rustup target add x86_64-unknown-linux-musl
           #cargo build --release --bin hermes
           cargo build --target x86_64-unknown-linux-musl --release --bin hermes
