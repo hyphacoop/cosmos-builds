@@ -1,0 +1,108 @@
+name: Gaia Linux Build e6da2cc3d1602a6c64fc50c90ea60651177d911b
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  collect_remote_commit:
+    name: Read latest main branch commit
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.query_commit.outputs.sha }}
+    steps:
+      - name: Query latest commit on the main branch
+        id: query_commit
+        run: |
+          commit=$(curl -s -L -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/cosmos/gaia/branches/main | jq -r '.commit.sha')
+          echo "sha=$commit" >> "$GITHUB_OUTPUT"
+
+  collect_latest_build:
+    name: Read latest release from build repo
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.query_release.outputs.sha }}
+    steps:
+      - name: Query latest release
+        id: query_release
+        run: |
+          curl -s -L -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/hyphacoop/cosmos-builds/releases > releases.json
+          release=$(jq -r '.[] | select(.tag_name== "gaiad-linux-main") |  .name' releases.json)
+          echo "sha=$release" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [collect_remote_commit, collect_latest_build]
+    if: needs.collect_remote_commit.outputs.sha != needs.collect_latest_build.outputs.sha
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+
+      - name: Install tools
+        run: |
+          sudo apt-get install curl jq -y
+
+      - name: Setup environment
+        run: |
+          sudo apt install build-essential wget -y
+
+      - name: Install golang
+        run: |
+          wget -q https://go.dev/dl/go1.20.linux-amd64.tar.gz
+          sudo tar -C /usr/local -xzf go1.20.linux-amd64.tar.gz
+
+      - name: Update PATH
+        run: |
+          echo "/usr/local/go/bin" >> $GITHUB_PATH
+          go version
+
+      - name: Clone and build Gaia
+        run: |
+          git clone https://github.com/cosmos/gaia.git
+          cd gaia
+          git checkout e6da2cc3d1602a6c64fc50c90ea60651177d911b
+          export LDFLAGS="-extldflags=-static"
+          export CGO_ENABLED=0
+          make build
+          cp build/gaiad ~/gaiad-linux
+      
+      - name: Print gaia version
+        run: |
+          ~/gaiad-linux version
+
+      # Publish
+      - name: Remove old releases
+        uses: dev-drprasad/delete-older-releases@v0.2.1
+        with:
+          keep_latest: 0
+          delete_tag_pattern: "gaiad-linux-e6da2cc3d1602a6c64fc50c90ea60651177d911b"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "~/gaiad-linux"
+          name: ${{needs.collect_remote_commit.outputs.sha}}
+          bodyFile: .github/workflows/gaiad-linux-e6da2cc3d1602a6c64fc50c90ea60651177d911b-body.md
+          prerelease: true
+          replacesArtifacts: false
+          allowUpdates: false
+          tag: "gaiad-linux-e6da2cc3d1602a6c64fc50c90ea60651177d911b"
+          token: ${{ secrets.GITHUB_TOKEN }}
+        
+      # Trigger cosmos-ansible workflows
+      # - name: Dispatch to cosmos-ansible repo
+      #   env:
+      #     SECRET_TOKEN: ${{ secrets.HYPHA_BOT_ACTIONS_TOKEN }}
+      #   run: |
+      #     curl -L \
+      #     -X POST \
+      #     -H "Accept: application/vnd.github+json" \
+      #     -H "Authorization: Bearer $SECRET_TOKEN" \
+      #     -H "X-GitHub-Api-Version: 2022-11-28" \
+      #     https://api.github.com/repos/hyphacoop/cosmos-ansible/dispatches \
+      #     -d '{"event_type":"new_main_build","client_payload":{}}'
