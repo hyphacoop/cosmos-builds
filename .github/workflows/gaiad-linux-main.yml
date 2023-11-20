@@ -64,7 +64,8 @@ jobs:
         run: |
           git clone https://github.com/cosmos/gaia.git
           cd gaia
-          git checkout main
+          # git checkout main
+          git checkout sainoe/ics-cli-fix
           export LDFLAGS="-extldflags=-static"
           export CGO_ENABLED=0
           make build
