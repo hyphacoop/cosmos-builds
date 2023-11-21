@@ -45,7 +45,7 @@ jobs:
           LAST_RELEASE=$(curl -s -L -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/cosmos/interchain-security/releases | jq -r '.[0].tag_name')
           git clone https://github.com/cosmos/interchain-security.git
           cd interchain-security
-          git checkout v2.3.0-provider-lsm
+          git checkout v3.0.0
           export LDFLAGS="-extldflags=-static"
           export CGO_ENABLED=0
           make install
@@ -56,12 +56,12 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "~/interchain-security-pd-linux"
-          name: ics-provider-v2.3.0-provider-lsm
+          name: ics-provider-v3.0.0
           # name: provider-${{needs.collect_remote_release.outputs.release}}
           bodyFile: .github/workflows/ics-provider-linux-release-body.md
           prerelease: true
           replacesArtifacts: false
           allowUpdates: false
           #tag: "ics-provider-${{needs.collect_remote_release.outputs.release}}"
-          tag: "ics-provider-v2.3.0-provider-lsm"
+          tag: "ics-provider-v3.0.0"
           token: ${{ secrets.GITHUB_TOKEN }}
