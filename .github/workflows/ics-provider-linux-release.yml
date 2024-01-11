@@ -37,6 +37,7 @@ jobs:
       - name: Install golang
         run: |
           sudo apt remove golang
+          sudo rm /usr/bin/go
           wget -q https://go.dev/dl/go1.21.6.linux-amd64.tar.gz
           sudo tar -C /usr/local -xzf go1.21.6.linux-amd64.tar.gz
 
