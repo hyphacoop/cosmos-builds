@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 6,8,10,12,14,16,18 * * 1-5'
+  push:
 
 jobs:
   collect_remote_commit:
@@ -27,8 +28,8 @@ jobs:
       - name: Query latest release
         id: query_release
         run: |
-          curl -s -L -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/hyphacoop/cosmos-builds/releases > releases.json
-          release=$(jq -r '.[] | select(.tag_name== "gaiad-linux-main") |  .name' releases.json)
+          curl -s -L -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/hyphacoop/cosmos-builds/releases\?per_page\=50 > releases.json
+          release=$(jq -r '.[] | select(.tag_name == "gaiad-linux-main") |  .name' releases.json)
           echo "sha=$release" >> "$GITHUB_OUTPUT"
 
   build:
