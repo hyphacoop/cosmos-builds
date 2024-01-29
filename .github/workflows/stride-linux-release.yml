@@ -23,22 +23,22 @@ jobs:
 
       - name: Install golang
         run: |
-          wget -q https://go.dev/dl/go1.19.linux-amd64.tar.gz
-          sudo tar -C /usr/local -xzf go1.19.linux-amd64.tar.gz
+          wget -q https://go.dev/dl/go1.20.linux-amd64.tar.gz
+          sudo tar -C /usr/local -xzf go1.20.linux-amd64.tar.gz
 
       - name: Print go version
         run: |
           go version
           
-      - name: Clone and build Stride (sovereign)
-        run: |
-          export PATH=/usr/local/go/bin:$PATH
-          git clone https://github.com/Stride-Labs/stride.git
-          cd stride
-          git checkout 3aeb075f36cb12711201a7f17e8b8d856bd99a01
-          export LDFLAGS="-extldflags=-static"
-          make install
-          cp ~/go/bin/strided ~/strided-linux
+      # - name: Clone and build Stride (sovereign)
+      #   run: |
+      #     export PATH=/usr/local/go/bin:$PATH
+      #     git clone https://github.com/Stride-Labs/stride.git
+      #     cd stride
+      #     git checkout 3aeb075f36cb12711201a7f17e8b8d856bd99a01
+      #     export LDFLAGS="-extldflags=-static"
+      #     make install
+      #     cp ~/go/bin/strided ~/strided-linux
       
       - name: Clone and build Stride (consumer)
         run: |
