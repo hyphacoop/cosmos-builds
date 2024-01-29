@@ -47,23 +47,24 @@ jobs:
           export PATH=/usr/local/go/bin:$PATH
           git clone https://github.com/Stride-Labs/stride.git
           cd stride
-          git checkout 17fa2fd7802005a7af09e6d2d0f5126b4bf1e10f
+          # git checkout 17fa2fd7802005a7af09e6d2d0f5126b4bf1e10f
+          git checkout v18.0.0
           export LDFLAGS="-extldflags=-static"
           make install
           cp ~/go/bin/strided ~/strided-consumer-linux
 
       # Publish
-      - name: Add sovereign release
-        uses: ncipollo/release-action@v1
-        continue-on-error: true
-        with:
-          artifacts: "~/strided-linux"
-          bodyFile: .github/workflows/stride-linux-release-body.md
-          prerelease: true
-          replacesArtifacts: false
-          allowUpdates: false
-          tag: "stride-linux"
-          token: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Add sovereign release
+      #   uses: ncipollo/release-action@v1
+      #   continue-on-error: true
+      #   with:
+      #     artifacts: "~/strided-linux"
+      #     bodyFile: .github/workflows/stride-linux-release-body.md
+      #     prerelease: true
+      #     replacesArtifacts: false
+      #     allowUpdates: false
+      #     tag: "stride-linux"
+      #     token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Add consumer release
         uses: ncipollo/release-action@v1
@@ -73,5 +74,5 @@ jobs:
           prerelease: true
           replacesArtifacts: false
           allowUpdates: false
-          tag: "stride-consumer-linux"
+          tag: "stride-consumer-v18.0.0"
           token: ${{ secrets.GITHUB_TOKEN }}
