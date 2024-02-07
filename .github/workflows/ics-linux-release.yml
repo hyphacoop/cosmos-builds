@@ -2,7 +2,7 @@ name: ICS Consumer Linux Build Release
 
 on:  
   workflow_dispatch:
-  # push:
+  push:
 jobs:
   collect_remote_release:
     name: Read latest interchain-security release
@@ -48,7 +48,7 @@ jobs:
           git clone https://github.com/cosmos/interchain-security.git
           cd interchain-security
           # git checkout $LAST_RELEASE
-          git checkout v4.0.0-rc1
+          git checkout v4.0.0
           export LDFLAGS="-extldflags=-static"
           export CGO_ENABLED=0
           make install
@@ -60,11 +60,11 @@ jobs:
         with:
           artifacts: "~/interchain-security-cd-linux"
           # name: ics-consumer-${{needs.collect_remote_release.outputs.release}}
-          name: ics-consumer-v4.0.0-rc1
+          name: ics-consumer-v4.0.0
           bodyFile: .github/workflows/ics-linux-release-body.md
           prerelease: true
           replacesArtifacts: false
           allowUpdates: false
           # tag: "ics-consumer-${{needs.collect_remote_release.outputs.release}}"
-          tag: "ics-consumer-v4.0.0-rc1"
+          tag: "ics-consumer-v4.0.0"
           token: ${{ secrets.GITHUB_TOKEN }}
