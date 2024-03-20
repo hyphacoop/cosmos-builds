@@ -1,4 +1,4 @@
-name: ICS Provider Linux PSS Build
+name: ICS Consumer Linux PSS Build
 
 on:  
   workflow_dispatch:
@@ -37,17 +37,17 @@ jobs:
           export LDFLAGS="-extldflags=-static"
           export CGO_ENABLED=0
           make install
-          cp ~/go/bin/interchain-security-pd ~/interchain-security-pd-linux
+          cp ~/go/bin/interchain-security-cd ~/interchain-security-cd-linux
       
       # Publish
       - name: Add release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "~/interchain-security-pd-linux"
-          name: provider-pss
-          bodyFile: .github/workflows/ics-provider-linux-pss-body.md
+          artifacts: "~/interchain-security-cd-linux"
+          name: consumer-pss
+          bodyFile: .github/workflows/ics-consumer-linux-pss-body.md
           prerelease: true
           replacesArtifacts: false
           allowUpdates: false
-          tag: "ics-provider-pss"
+          tag: "ics-consumer-pss"
           token: ${{ secrets.GITHUB_TOKEN }}
