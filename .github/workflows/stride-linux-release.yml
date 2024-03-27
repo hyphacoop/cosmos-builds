@@ -48,7 +48,7 @@ jobs:
           git clone https://github.com/Stride-Labs/stride.git
           cd stride
           # git checkout 17fa2fd7802005a7af09e6d2d0f5126b4bf1e10f
-          git checkout v18.0.0
+          git checkout v19.0.0
           export LDFLAGS="-extldflags=-static"
           make install
           cp ~/go/bin/strided ~/strided-consumer-linux
@@ -74,5 +74,5 @@ jobs:
           prerelease: true
           replacesArtifacts: false
           allowUpdates: false
-          tag: "stride-consumer-v18.0.0"
+          tag: "stride-consumer-v19.0.0"
           token: ${{ secrets.GITHUB_TOKEN }}
