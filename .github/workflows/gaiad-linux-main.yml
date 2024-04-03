@@ -70,8 +70,8 @@ jobs:
           git checkout main
           export LDFLAGS="-extldflags=-static"
           export CGO_ENABLED=0
-          make install
-          cp /home/runner/go/bin/gaiad ~/gaiad-linux
+          make builod
+          cp build/gaiad ~/gaiad-linux
       
       - name: Print gaia version
         run: |
