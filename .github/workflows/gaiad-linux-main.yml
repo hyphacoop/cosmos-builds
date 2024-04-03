@@ -70,7 +70,7 @@ jobs:
           git checkout main
           export LDFLAGS="-extldflags=-static"
           export CGO_ENABLED=0
-          make builod
+          make build
           cp build/gaiad ~/gaiad-linux
       
       - name: Print gaia version
