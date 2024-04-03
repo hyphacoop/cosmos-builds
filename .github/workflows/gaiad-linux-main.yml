@@ -64,7 +64,7 @@ jobs:
       - name: Clone and build Gaia
         run: |
           go version
-          export GOTOOLCHAIN=go1.21
+          export GOTOOLCHAIN=go1.21.8
           git clone https://github.com/cosmos/gaia.git
           cd gaia
           git checkout main
