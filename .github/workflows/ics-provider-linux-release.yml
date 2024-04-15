@@ -57,7 +57,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "~/interchain-security-pd-linux"
-          name: provider-v4.1.0-rc2
+          name: ics-provider-v4.1.0-rc2
           bodyFile: .github/workflows/ics-provider-linux-release-body.md
           prerelease: true
           replacesArtifacts: false
