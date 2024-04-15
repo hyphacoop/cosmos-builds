@@ -2,7 +2,7 @@ name: ICS Provider Linux Build Release
 
 on:  
   workflow_dispatch:
-  push:
+  # push:
 
 jobs:
   collect_remote_release:
