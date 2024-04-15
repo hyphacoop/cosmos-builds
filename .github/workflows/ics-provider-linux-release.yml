@@ -2,6 +2,7 @@ name: ICS Provider Linux Build Release
 
 on:  
   workflow_dispatch:
+  push:
 
 jobs:
   collect_remote_release:
@@ -45,7 +46,7 @@ jobs:
           LAST_RELEASE=$(curl -s -L -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/cosmos/interchain-security/releases | jq -r '.[0].tag_name')
           git clone https://github.com/cosmos/interchain-security.git
           cd interchain-security
-          git checkout v2.1.0-provider-lsm-rc1
+          git checkout v4.1.0-rc2
           export LDFLAGS="-extldflags=-static"
           export CGO_ENABLED=0
           make install
@@ -62,5 +63,5 @@ jobs:
           replacesArtifacts: false
           allowUpdates: false
           #tag: "ics-provider-${{needs.collect_remote_release.outputs.release}}"
-          tag: "ics-provider-preview"
+          tag: "ics-provider-v4.1.0-rc2"
           token: ${{ secrets.GITHUB_TOKEN }}
