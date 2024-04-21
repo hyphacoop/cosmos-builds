@@ -69,10 +69,11 @@ jobs:
       - name: Add consumer release
         uses: ncipollo/release-action@v1
         with:
+          name: stride-v22.0.0
           artifacts: "~/strided-consumer-linux"
           bodyFile: .github/workflows/stridec-linux-release-body.md
           prerelease: true
           replacesArtifacts: false
           allowUpdates: false
-          tag: "stride-consumer-v19.0.0"
+          tag: "stride-consumer-v22.0.0"
           token: ${{ secrets.GITHUB_TOKEN }}
