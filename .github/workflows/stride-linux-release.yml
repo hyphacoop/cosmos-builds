@@ -49,7 +49,7 @@ jobs:
           cd stride
           # git checkout 17fa2fd7802005a7af09e6d2d0f5126b4bf1e10f
           git checkout v22.0.0
-          export LDFLAGS="-extldflags=-static"
+          # export LDFLAGS="-extldflags=-static"
           make install
           cp ~/go/bin/strided ~/strided-consumer-linux
 
