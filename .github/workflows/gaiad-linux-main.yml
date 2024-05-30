@@ -32,52 +32,16 @@ jobs:
           release=$(jq -r '.[] | select(.tag_name == "gaiad-linux-main") |  .name' releases.json)
           echo "sha=$release" >> "$GITHUB_OUTPUT"
 
-  build:
-    name: Build
+  build-binary:
+    name: Build binary
     runs-on: ubuntu-latest
     needs: [collect_remote_commit, collect_latest_build]
-    if: needs.collect_remote_commit.outputs.sha != needs.collect_latest_build.outputs.sha
+    # if: needs.collect_remote_commit.outputs.sha != needs.collect_latest_build.outputs.sha
     permissions:
       contents: write
     steps:
       - name: Check out repo
         uses: actions/checkout@v3
-
-      - name: Install tools
-        run: |
-          sudo apt-get install curl jq -y
-
-      - name: Setup environment
-        run: |
-          sudo apt install build-essential wget -y
-
-      - name: Install golang
-        run: |
-          wget -q https://go.dev/dl/go1.21.8.linux-amd64.tar.gz
-          sudo tar -C /usr/local -xzf go1.21.8.linux-amd64.tar.gz
-
-      - name: Update PATH
-        run: |
-          echo "/usr/local/go/bin" >> $GITHUB_PATH
-          go version
-
-      - name: Clone and build Gaia
-        run: |
-          go version
-          export GOTOOLCHAIN=go1.21.8
-          git clone https://github.com/cosmos/gaia.git
-          cd gaia
-          git checkout main
-          export LDFLAGS="-extldflags=-static"
-          export CGO_ENABLED=0
-          make build
-          cp build/gaiad ~/gaiad-linux
-      
-      - name: Print gaia version
-        run: |
-          ~/gaiad-linux version
-
-      # Publish
       - name: Remove old releases
         uses: dev-drprasad/delete-older-releases@v0.2.1
         with:
@@ -85,28 +49,41 @@ jobs:
           delete_tag_pattern: "gaiad-linux-main"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Add release
-        uses: ncipollo/release-action@v1
+      - name: Build and release
+        uses: ./.github/actions/build-gaiad-binary
         with:
-          artifacts: "~/gaiad-linux"
-          name: ${{needs.collect_remote_commit.outputs.sha}}
-          bodyFile: .github/workflows/gaiad-linux-main-body.md
-          prerelease: true
-          replacesArtifacts: false
-          allowUpdates: false
-          tag: "gaiad-linux-main"
-          token: ${{ secrets.GITHUB_TOKEN }}
-        
-      # Trigger cosmos-release-testing workflows
-      - name: Dispatch to cosmos-release-testing repo
-        env:
-          SECRET_TOKEN: ${{ secrets.HYPHA_BOT_ACTIONS_TOKEN }}
-        run: |
-          curl -L \
-          -X POST \
-          -H "Accept: application/vnd.github+json" \
-          -H "Authorization: Bearer $SECRET_TOKEN" \
-          -H "X-GitHub-Api-Version: 2022-11-28" \
-          https://api.github.com/repos/hyphacoop/cosmos-release-testing/dispatches \
-          -d '{"event_type":"new_main_build","client_payload":{}}'
+          ref: main
+          release_name: gaiad-linux-main
+          remote_commit_sha: ${{ needs.collect_remote_commit.outputs.sha }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          bot_token: ${{ secrets.HYPHA_BOT_ACTIONS_TOKEN }}
+  build-docker:
+    name: Build Docker image
+    runs-on: ubuntu-latest
+    needs: [collect_remote_commit, collect_latest_build]
+    # if: needs.collect_remote_commit.outputs.sha != needs.collect_latest_build.outputs.sha
+    permissions: write-all
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Delete old docker images
+        uses: rafalkk/remove-dockertag-action@v1
+        continue-on-error: true
+        with:
+          tag_name: main
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push Docker image
+        uses: strangelove-ventures/heighliner-build-action@v1.0.2
+        with:
+          chain: gaia
+          tag: main
+          git-ref: main
+          github-organization: cosmos
+          github-repo: gaia
+          additional-args: "--go-version=1.21.10"
