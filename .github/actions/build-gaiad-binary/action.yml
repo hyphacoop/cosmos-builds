@@ -73,6 +73,7 @@ runs:
           allowUpdates: false
           tag: ${{ inputs.release_name }}
           token: ${{ inputs.github_token }}
+          skipIfReleaseExists: true
 
       - name: Dispatch to cosmos-release-testing repo
         shell: bash
