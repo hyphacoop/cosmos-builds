@@ -1,0 +1,55 @@
+name: "Build ICS Binary"
+description: "Builds the ICS binary from a release and uploads it as an artifact."
+inputs:
+  release:
+    description: "The release to build the ICS binary from."
+    required: true
+  github_token:
+    description: "The GitHub token."
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Install tools
+      shell: bash
+      run: |
+        sudo apt-get install curl jq -y
+
+    - name: Setup environment
+      shell: bash
+      run: |
+        sudo apt install build-essential wget -y
+
+    - name: Install golang
+      shell: bash
+      run: |
+        wget -q https://go.dev/dl/go1.20.linux-amd64.tar.gz
+        sudo tar -C /usr/local -xzf go1.20.linux-amd64.tar.gz
+
+    - name: Clone and build interchain security
+      shell: bash
+      run: |
+        export PATH=$PATH:/usr/local/go/bin
+        RELEASE=${{ inputs.release }}
+        git clone https://github.com/cosmos/interchain-security.git
+        cd interchain-security
+        git checkout $RELEASE
+        export LDFLAGS="-extldflags=-static"
+        export CGO_ENABLED=0
+        make install
+        cp ~/go/bin/interchain-security-cd ~/interchain-security-cd-linux
+        cp ~/go/bin/interchain-security-pd ~/interchain-security-pd-linux
+    
+    # Publish
+    - name: Add release
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: "~/interchain-security-cd-linux,~/interchain-security-pd-linux"
+        name: ics-${{ inputs.release }}
+        bodyFile: .github/workflows/ics-linux-release-body.md
+        prerelease: true
+        replacesArtifacts: false
+        allowUpdates: false
+        tag: "ics-${{ inputs.release }}"
+        token: ${{ inputs.github_token }}
+        skipIfReleaseExists: true

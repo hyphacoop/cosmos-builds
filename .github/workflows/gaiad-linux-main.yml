@@ -76,7 +76,7 @@ jobs:
         uses: rafalkk/remove-dockertag-action@v1
         continue-on-error: true
         with:
-          tag_name: main
+          tag_name: hyphacoop/gaia:main
           github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and push Docker image
         uses: strangelove-ventures/heighliner-build-action@v1.0.2
