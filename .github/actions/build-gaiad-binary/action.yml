@@ -35,8 +35,8 @@ runs:
       - name: Install golang
         shell: bash
         run: |
-          wget -q https://go.dev/dl/go1.21.8.linux-amd64.tar.gz
-          sudo tar -C /usr/local -xzf go1.21.8.linux-amd64.tar.gz
+          wget -q https://go.dev/dl/go1.22.4.linux-amd64.tar.gz
+          sudo tar -C /usr/local -xzf go1.22.4.linux-amd64.tar.gz
 
       - name: Update PATH
         shell: bash
@@ -48,7 +48,7 @@ runs:
         shell: bash
         run: |
           go version
-          export GOTOOLCHAIN=go1.21.8
+          export GOTOOLCHAIN=go1.22.4
           git clone https://github.com/cosmos/gaia.git
           cd gaia
           git checkout ${{ inputs.ref }}
