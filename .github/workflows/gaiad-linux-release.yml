@@ -68,5 +68,5 @@ jobs:
           git-ref: ${{ matrix.release }}
           github-organization: cosmos
           github-repo: gaia
-          additional-args: "--go-version=1.21.10"
+          additional-args: "--go-version=1.22.0"
           heighliner-tag: v1.5.5
