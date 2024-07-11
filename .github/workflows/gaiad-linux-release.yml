@@ -6,6 +6,9 @@ on:
       version_regex:
         description: "The regex to filter the version (e.g. '^v18')"
         required: true
+      go_version:
+        description: "The go version to download and use."
+        default: "1.22.4"
   # push:
 
 jobs:
@@ -43,6 +46,7 @@ jobs:
           remote_commit_sha: ${{ matrix.release }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           bot_token: ${{ secrets.HYPHA_BOT_ACTIONS_TOKEN }}
+          go_version: ${{ github.event.inputs.go_version }}
   build-docker:
     name: Build Docker image
     runs-on: ubuntu-latest
@@ -68,5 +72,5 @@ jobs:
           git-ref: ${{ matrix.release }}
           github-organization: cosmos
           github-repo: gaia
-          additional-args: "--go-version=1.22.3"
+          additional-args: "--go-version=${{ inputs.go_version }}"
           heighliner-tag: v1.5.5
