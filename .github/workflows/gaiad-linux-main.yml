@@ -64,6 +64,8 @@ jobs:
     if: needs.collect_remote_commit.outputs.sha != needs.collect_latest_build.outputs.sha
     permissions: write-all
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Log in to the Container registry
@@ -78,13 +80,8 @@ jobs:
         with:
           tag_name: hyphacoop/gaia:main
           github_token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push Docker image
-        uses: strangelove-ventures/heighliner-build-action@v1.0.2
-        with:
-          chain: gaia
-          tag: main
-          git-ref: main
-          github-organization: cosmos
-          github-repo: gaia
-          additional-args: "--go-version=1.22.4"
-          heighliner-tag: v1.5.5
+      - name: Retag
+        run: |
+          docker pull "ghcr.io/cosmos/gaia:main"
+          docker tag "ghcr.io/cosmos/gaia:main" "ghcr.io/hyphacoop/gaia:main"
+          docker push "ghcr.io/hyphacoop/gaia:main"
