@@ -51,8 +51,10 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check out repo
+        uses: actions/checkout@v3
       - name: Build and push Docker image
-        uses: strangelove-ventures/heighliner-build-action@v1.0.2
+        uses: strangelove-ventures/heighliner-build-action@v1.0.3
         with:
           chain: ics
           tag: ${{ matrix.release }}
@@ -61,3 +63,4 @@ jobs:
           github-repo: interchain-security
           additional-args: "--go-version=1.22.8"
           heighliner-tag: v1.7.0
+          chains-spec-file: ./ics-chains.yaml

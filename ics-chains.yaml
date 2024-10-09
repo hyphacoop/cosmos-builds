@@ -1,0 +1,19 @@
+# This is for heighliner to know how to build ics with interchain-security-sd and -cdd
+
+- name: ics
+  github-organization: cosmos
+  github-repo: interchain-security
+  dockerfile: cosmos
+  build-target: |
+    export GOFLAGS='-buildmode=pie'
+    export CGO_CPPFLAGS="-D_FORTIFY_SOURCE=2"
+    export CGO_LDFLAGS="-Wl,-z,relro,-z,now -fstack-protector"
+    go install -ldflags="$LDFLAGS" ./cmd/interchain-security-pd
+    go install -ldflags="$LDFLAGS" ./cmd/interchain-security-cd
+    go install -ldflags="$LDFLAGS" ./cmd/interchain-security-cdd
+    go install -ldflags="$LDFLAGS" ./cmd/interchain-security-sd
+  binaries:
+    - /go/bin/interchain-security-pd
+    - /go/bin/interchain-security-cd
+    - /go/bin/interchain-security-cdd
+    - /go/bin/interchain-security-sd
