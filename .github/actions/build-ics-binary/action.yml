@@ -39,12 +39,14 @@ runs:
         make install
         cp ~/go/bin/interchain-security-cd ~/interchain-security-cd-linux
         cp ~/go/bin/interchain-security-pd ~/interchain-security-pd-linux
+        cp ~/go/bin/interchain-security-cdd ~/interchain-security-cdd-linux
+        cp ~/go/bin/interchain-security-sd ~/interchain-security-sd-linux
     
     # Publish
     - name: Add release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "~/interchain-security-cd-linux,~/interchain-security-pd-linux"
+        artifacts: "~/interchain-security-cd-linux,~/interchain-security-pd-linux,~/interchain-security-cdd-linux,~/interchain-security-sd-linux"
         name: ics-${{ inputs.release }}
         bodyFile: .github/workflows/ics-linux-release-body.md
         prerelease: true
