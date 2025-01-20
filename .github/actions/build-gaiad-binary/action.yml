@@ -54,6 +54,13 @@ runs:
         run: |
           ~/gaiad-linux version
 
+      - name: Trim commit SHA
+        id: trim_sha
+        run: |
+          sha=${{ inputs.remote_commit_sha }}
+          echo "short_sha=${sha:0:7}" >> $GITHUB_ENV
+        shell: bash
+
       - name: Add release
         uses: ncipollo/release-action@v1
         with:
@@ -63,9 +70,12 @@ runs:
           prerelease: true
           replacesArtifacts: false
           allowUpdates: false
-          tag: ${{ inputs.release_name }}
+          tag: ${{ env.short_sha }}
           token: ${{ inputs.github_token }}
           skipIfReleaseExists: true
+          artifactErrorsFailBuild: true
+          makeLatest: true
+          commit: ${{ github.sha }}
 
       - name: Dispatch to cosmos-release-testing repo
         shell: bash
