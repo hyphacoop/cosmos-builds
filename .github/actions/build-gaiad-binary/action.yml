@@ -35,17 +35,8 @@ runs:
         run: |
           sudo apt install build-essential wget -y
 
-      - name: Install golang
-        shell: bash
-        run: |
-          wget -q https://go.dev/dl/go${{ inputs.go_version }}.linux-amd64.tar.gz
-          sudo tar -C /usr/local -xzf go${{ inputs.go_version }}.linux-amd64.tar.gz
-
-      - name: Update PATH
-        shell: bash
-        run: |
-          echo "/usr/local/go/bin" >> $GITHUB_PATH
-          go version
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Clone and build Gaia
         shell: bash
@@ -55,10 +46,8 @@ runs:
           git clone https://github.com/cosmos/gaia.git
           cd gaia
           git checkout ${{ inputs.ref }}
-          export LDFLAGS="-extldflags=-static"
-          export CGO_ENABLED=0
-          make build
-          cp build/gaiad ~/gaiad-linux
+          make build-static-linux-amd64
+          cp build/gaiad-linux-amd64/gaiad ~/gaiad-linux
       
       - name: Print gaia version
         shell: bash
@@ -72,11 +61,11 @@ runs:
           name: ${{ inputs.remote_commit_sha }}
           bodyFile: .github/workflows/gaiad-linux-main-body.md
           prerelease: true
-          replacesArtifacts: false
+          replacesArtifacts: true
           allowUpdates: false
           tag: ${{ inputs.release_name }}
           token: ${{ inputs.github_token }}
-          skipIfReleaseExists: true
+          skipIfReleaseExists: false
 
       - name: Dispatch to cosmos-release-testing repo
         shell: bash
