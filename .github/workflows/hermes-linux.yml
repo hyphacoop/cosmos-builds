@@ -48,9 +48,9 @@ jobs:
           source "$HOME/.cargo/env"
           cargo version
 
-      - name: Install protobuf-compiler
+      - name: Install protobuf-compiler and libssl-dev
         run: |
-          sudo apt-get install protobuf-compiler
+          sudo apt-get install protobuf-compiler libssl-dev
 
       - name: Clone and build Hermes
         run: |
