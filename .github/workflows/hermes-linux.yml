@@ -48,6 +48,10 @@ jobs:
           source "$HOME/.cargo/env"
           cargo version
 
+      - name: Install protobuf-compiler
+        run: |
+          sudo apt-get install protobuf-compiler
+
       - name: Clone and build Hermes
         run: |
           source "$HOME/.cargo/env"
